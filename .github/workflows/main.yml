@@ -12,8 +12,6 @@ jobs:
     runs-on: ubuntu-latest
     name: Build and Test
     steps:
-      # To use this repository's private action,
-      # you must check out the repository
       - name: Checkout
         uses: actions/checkout@v3
       - name: actions/setup-node
@@ -34,19 +32,32 @@ jobs:
       # Use the output from the `hello` step
       - name: Get the output time
         run: echo "The time was ${{ steps.hello.outputs.time }}"
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: dist
+          path: dist/
+  update:
+    runs-on: ubuntu-latest
+    name: Update Dist
+    if: ${{ github.event_name == 'pull_request' }}
+    steps:
       - name: Checkout
         uses: actions/checkout@v3
-        if: ${{ github.event_name == 'pull_request' }}
         with:
           ref: ${{ github.head_ref }}
+      - uses: actions/download-artifact@v3
+        with:
+          name: dist
+          path: dist
       - name: Commit and Push
-        if: ${{ github.event_name == 'pull_request' }}
         shell: bash
         run: |
-          git add .
-          git status --porcelain
-          git config --local user.name "github-actions[bot]"
-          git config --local user.email "github-actions[bot]@users.noreply.github.com"
-          if git commit -m "[AUTO] Update dist package"; then
-            git push
-          fi
+          tree -aI "\.git" .
+          # git add .
+          # git status --porcelain
+          # git config --local user.name "github-actions[bot]"
+          # git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          # if git commit -m "[AUTO] Update dist package"; then
+          #   git push
+          # fi
