@@ -16,8 +16,6 @@ jobs:
       # you must check out the repository
       - name: Checkout
         uses: actions/checkout@v3
-        with:
-          ref: ${{ github.ref_name }}
       - name: actions/setup-node
         uses: actions/setup-node@v3
         with:
@@ -40,10 +38,11 @@ jobs:
         if: ${{ github.event_name == 'pull_request' }}
         shell: bash
         run: |
+          git checkout ${{ github.head_ref }}
           git add .
           git status --porcelain
           git config --local user.name "github-actions[bot]"
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           if git commit -m "[AUTO] Update dist package"; then
-            git push
+            git push origin ${{ github.head_ref }}
           fi
