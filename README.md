@@ -1,2 +1,3 @@
 # hello-world-javascript-action
-Sample Hello World JavaScript actions 
+
+Sample Hello World JavaScript actions
