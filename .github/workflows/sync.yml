@@ -25,6 +25,7 @@ jobs:
           repository: ${{ env.SOURCE_REPO }}
           token: ${{ secrets.SYNC_PAT }}
           path: 'source'
+          ref: configure-jscpd
       - name: Print files and directories
         shell: bash
         run: tree -aI "\.git" "$(pwd)"
