@@ -54,7 +54,6 @@ jobs:
       - name: Commit and Push
         shell: bash
         run: |
-          tree -aI "\.git" .
           git add .
           git status --porcelain
           git config --local user.name "github-actions[bot]"
