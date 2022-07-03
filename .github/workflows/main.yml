@@ -8,9 +8,9 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
+  build_and_test:
     runs-on: ubuntu-latest
-    name: Build
+    name: Build and Test
     steps:
       # To use this repository's private action,
       # you must check out the repository
