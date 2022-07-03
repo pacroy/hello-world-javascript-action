@@ -24,7 +24,7 @@ jobs:
         shell: bash
         run: |
           npm install
-          npm install @vercel/ncc
+          npm install --global @vercel/ncc
           ncc build index.js --license license.txt
       - name: Hello world action step
         uses: ./ # Uses an action in the root directory
