@@ -34,15 +34,19 @@ jobs:
       # Use the output from the `hello` step
       - name: Get the output time
         run: echo "The time was ${{ steps.hello.outputs.time }}"
+      - name: Checkout
+        uses: actions/checkout@v3
+        if: ${{ github.event_name == 'pull_request' }}
+        with:
+          ref: ${{ github.head_ref }}
       - name: Commit and Push
         if: ${{ github.event_name == 'pull_request' }}
         shell: bash
         run: |
-          git checkout -b ${{ github.head_ref }}
           git add .
           git status --porcelain
           git config --local user.name "github-actions[bot]"
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           if git commit -m "[AUTO] Update dist package"; then
-            git push origin ${{ github.head_ref }}
+            git push
           fi
