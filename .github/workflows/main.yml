@@ -38,7 +38,6 @@ jobs:
         if: ${{ github.event_name == 'pull_request' }}
         shell: bash
         run: |
-          git checkout -b ${{ github.head_ref }}
           git add .
           git status --porcelain
           git config --local user.name "github-actions[bot]"
