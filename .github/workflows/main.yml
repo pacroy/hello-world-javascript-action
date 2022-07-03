@@ -16,6 +16,18 @@ jobs:
       # you must check out the repository
       - name: Checkout
         uses: actions/checkout@v3
+        with:
+          ref: ${{ github.ref_name }}
+      - name: actions/setup-node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+      - name: Build
+        shell: bash
+        run: |
+          npm install
+          npm install @vercel/ncc
+          ncc build index.js --license license.txt
       - name: Hello world action step
         uses: ./ # Uses an action in the root directory
         id: hello
@@ -24,3 +36,12 @@ jobs:
       # Use the output from the `hello` step
       - name: Get the output time
         run: echo "The time was ${{ steps.hello.outputs.time }}"
+      - name: Commit and Push
+        if: ${{ github.event_name == 'pull_request' }}
+        shell: bash
+        run: |
+          git config --local user.name "github-actions[bot]"
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          if git commit -m "[AUTO] Update dist package"; then
+            git push
+          fi
