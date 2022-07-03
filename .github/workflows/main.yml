@@ -38,11 +38,11 @@ jobs:
         if: ${{ github.event_name == 'pull_request' }}
         shell: bash
         run: |
-          git checkout origin/${{ github.head_ref }}
+          git checkout -b ${{ github.head_ref }}
           git add .
           git status --porcelain
           git config --local user.name "github-actions[bot]"
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           if git commit -m "[AUTO] Update dist package"; then
-            git push
+            git push origin ${{ github.head_ref }}
           fi
