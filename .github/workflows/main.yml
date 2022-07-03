@@ -1,0 +1,64 @@
+name: Build and Test
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build_and_test:
+    runs-on: ubuntu-latest
+    name: Build and Test
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: actions/setup-node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+      - name: Build
+        shell: bash
+        run: |
+          npm install
+          npm install --global @vercel/ncc
+          ncc build index.js --license license.txt
+      - name: Hello world action step
+        uses: ./ # Uses an action in the root directory
+        id: hello
+        with:
+          who-to-greet: 'Mona the Octocat'
+      # Use the output from the `hello` step
+      - name: Get the output time
+        run: echo "The time was ${{ steps.hello.outputs.time }}"
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: dist
+          path: dist/
+  update:
+    runs-on: ubuntu-latest
+    name: Update Dist
+    needs: build_and_test
+    if: ${{ github.event_name == 'pull_request' }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.head_ref }}
+      - uses: actions/download-artifact@v3
+        with:
+          name: dist
+          path: dist
+      - name: Commit and Push
+        shell: bash
+        run: |
+          tree -aI "\.git" .
+          git add .
+          git status --porcelain
+          git config --local user.name "github-actions[bot]"
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          if git commit -m "[AUTO] Update dist package"; then
+            git push
+          fi
