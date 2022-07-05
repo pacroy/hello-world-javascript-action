@@ -23,7 +23,7 @@ jobs:
         run: |
           npm install
           npm install --global @vercel/ncc
-          ncc build index.js --license license.txt
+          ncc build index.js cleanup.js --license license.txt
       - name: Hello world action step
         uses: ./ # Uses an action in the root directory
         id: hello
